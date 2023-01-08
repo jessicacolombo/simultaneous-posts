@@ -3,7 +3,7 @@
 Application created to study the concepts of ws and wss protocol in the websocket tool. The code was developed using TypeScript, TypeORM, PostgreSQL and socket.io API. 
 The front-end was created in html and the script in jQuery. 
 
-base URL: <a> https://simultaneous-posts-service.onrender.com </a>
+base URL: <a> http://localhost:3000</a>
 
 ## Routes: 
 
