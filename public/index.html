@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>Post here</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script
+      src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+      integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <form id="new-post-form">
+      <input type="text" name="username" placeholder="Digite seu usuário" />
+      <textarea
+        type="text"
+        name="content"
+        maxlength="264"
+        placeholder="Digite o conteudo do post"
+      ></textarea>
+      <button type="submit">Enviar</button>
+    </form>
+    <ul class="posts"></ul>
+
+    <script type="text/javascript">
+      let socket = io("http://localhost:3000/");
+
+      const renderPost = (post) => {
+        $(".posts").append(
+          `<li class="post-card">
+            <h2>${post.username}</h2>
+            <p>${post.content}</p>
+          </li>`
+        );
+      };
+
+      socket.on("previousPosts", (post) => {
+        post.forEach((post) => {
+          renderPost(post);
+        });
+      });
+
+      socket.on("receivedPost", (post) => {
+        renderPost(post);
+      });
+
+      $("#new-post-form").submit(() => {
+        event.preventDefault();
+
+        let username = $("input[name=username]").val();
+        let content = $("textarea[name=content]").val();
+
+        if (username.length && content.length) {
+          let newPost = {
+            username: username,
+            content: content,
+          };
+
+          renderPost(newPost);
+          socket.emit("sendPost", newPost);
+          $("input[name=username]").val("");
+          $("textarea[name=content]").val("");
+        }
+      });
+    </script>
+  </body>
+</html>
